@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import Field, field_validator
 
 
 class Config(BaseSettings):
@@ -11,6 +11,14 @@ class Config(BaseSettings):
         min_length=1,
         description="The domain of the Lovable platform. Default is 'lovable.dev'.",
     )
+
+    @field_validator("bearer_token")
+    @classmethod
+    def ensure_bearer_prefix(cls, v: str) -> str:
+        v = v.strip()
+        if not v.lower().startswith("bearer "):
+            return f"Bearer {v}"
+        return v
 
     @classmethod
     def from_env(cls):

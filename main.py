@@ -24,17 +24,24 @@ async def main(url: str, force_overwrite: bool = False):
         print("Loading environment variables from .env")
         dotenv.load_dotenv(dotenv_path=dotenv_path)
 
+    if not os.environ.get("BEARER_TOKEN"):
+
+        print("BEARER_TOKEN not found.")
+        token = input("Paste your Lovable Bearer token: ").strip()
+        if not token:
+            raise RuntimeError("Bearer token is required to continue")
+        print("BEARER_TOKEN Updated.")
+        os.environ["BEARER_TOKEN"] = token
+
     config = Config.from_env()
 
     async with LovableApi.new(config, lovable_url=url) as api:
-        source = await api.fetch_source()
-
-    source_builder(
-        basedir=basedir,
-        directory_name=api.lovable_uid,
-        source=source,
-        force_overwrite=force_overwrite,
-    )
+        await source_builder(
+            basedir=basedir,
+            directory_name=api.lovable_uid,
+            fetch_source=api.fetch_source,
+            force_overwrite=force_overwrite,
+        )
 
 
 def parse_args() -> argparse.Namespace:

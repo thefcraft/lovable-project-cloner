@@ -1,8 +1,9 @@
 from .model import SourceFiles
+from typing import Callable, Awaitable
 import os
 
 
-def source_builder(basedir: str, directory_name: str, source: SourceFiles, force_overwrite: bool = False):
+async def source_builder(basedir: str, directory_name: str, fetch_source: Callable[[], Awaitable[SourceFiles]], force_overwrite: bool = False):
     if not os.path.exists(basedir):
         raise ValueError(f"Base directory {basedir} does not exist")
     directory_path = os.path.join(basedir, directory_name)
@@ -13,6 +14,7 @@ def source_builder(basedir: str, directory_name: str, source: SourceFiles, force
             f"Directory {directory_name} already exists in base directory {basedir}"
             " and overwrite is set to False. Use `force_overwrite=True` to overwrite the directory."
         )
+    source = await fetch_source()
     for file in source.files:
         data = file.get_data()
         if data is None:
