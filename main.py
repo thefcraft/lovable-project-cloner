@@ -3,7 +3,7 @@ import argparse
 import os
 
 from src.api import LovableApi
-from src.config import Config
+from src.config import Config, BEARER_TOKEN
 from src.builder import source_builder
 
 
@@ -24,14 +24,14 @@ async def main(url: str, force_overwrite: bool = False):
         print("Loading environment variables from .env")
         dotenv.load_dotenv(dotenv_path=dotenv_path)
 
-    if not os.environ.get("BEARER_TOKEN"):
+    if not os.environ.get(BEARER_TOKEN):
 
-        print("BEARER_TOKEN not found.")
+        print(f"{BEARER_TOKEN} not found.")
         token = input("Paste your Lovable Bearer token: ").strip()
         if not token:
             raise RuntimeError("Bearer token is required to continue")
-        print("BEARER_TOKEN Updated.")
-        os.environ["BEARER_TOKEN"] = token
+        print(f"{BEARER_TOKEN} Updated.")
+        os.environ[BEARER_TOKEN] = token
 
     config = Config.from_env()
 

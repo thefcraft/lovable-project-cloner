@@ -1,9 +1,10 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field, field_validator
 
+BEARER_TOKEN: str = "BEARER_TOKEN"
 
 class Config(BaseSettings):
-    bearer_token: str = Field(..., alias="BEARER_TOKEN")
+    bearer_token: str = Field(..., alias=BEARER_TOKEN)
     aiohttp_cache_dir: str | None = Field(None, alias="AIOHTTP_CACHE_DIR")
     lovable_valid_domain: str = Field(
         default="lovable.dev",
